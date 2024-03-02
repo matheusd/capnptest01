@@ -118,3 +118,31 @@ func BenchmarkSetText04(b *testing.B) {
 
 	// b.Log(arena.String())
 }
+
+func BenchmarkSetText05(b *testing.B) {
+	var msg capnp.Message
+	arena := ManualSingleSegment(make([]byte, 0, 1024))
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		seg, err := msg.Reset(arena)
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		tx, err := NewTransaction(seg)
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		err = tx.SetDescription("my own descr")
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+
+	b.Log(arena.String())
+
+}
